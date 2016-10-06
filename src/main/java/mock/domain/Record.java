@@ -49,4 +49,22 @@ public class Record <T extends Number> {
         this.value = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Record<?> record = (Record<?>) o;
+
+        if (!date.equals(record.date)) return false;
+        return value.equals(record.value);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = date.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
+    }
 }

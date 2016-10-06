@@ -3,7 +3,6 @@ package mock;
 import mock.domain.Human;
 import mock.domain.Record;
 import org.junit.Test;
-import org.mockito.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -26,24 +25,18 @@ public class Task1 {
 
     @Test
     public void mockPayment() throws Exception {
+        //given
         Human human = mock(Human.class);
-        LocalDate now = LocalDate.now();
-        LocalDate[] ld = new LocalDate[]{
-                LocalDate.of(2016, 11, 20),
-                LocalDate.of(2016, 11, 21),
-                LocalDate.of(2016, 11, 22)
-        };
-
-        Record<Integer> record1 = new Record<>(ld[0], 100);
-        Record<Integer> record2 = new Record<>(ld[1], 200);
-        Record<Integer> record3 = new Record<>(ld[2], 3300);
-        List<Record<Integer>> calories = Arrays.asList(record1, record2,
-                record3);
+        List<Record<Integer>> calories = init();
+        Record<Integer> record2 = new Record<>(LocalDate.of(2016, 11, 21), 200);
         given(human.getCalories()).willReturn(calories);
 
-//        when(human.getSumDue()).thenCallRealMethod();
-
-        System.out.println(human.getCalories().get(1));
+        //when
+        Record<Integer> record = human.getCalories().get(1);
+        System.out.println(record);
+        System.out.println(record2);
+        //then
+        assertThat(record, is(record2));
     }
 
     @Test
@@ -76,5 +69,23 @@ public class Task1 {
 //        verify(mockedList).add("one");
 //        verify(mockedList).add("two");
         assertThat(mockedList.size(), is(1));
+    }
+
+
+    public List<Record<Integer>> init() {
+        List<Record<Integer>> calories = new ArrayList<>();
+        LocalDate now = LocalDate.now();
+        LocalDate[] ld = new LocalDate[]{
+                LocalDate.of(2016, 11, 20),
+                LocalDate.of(2016, 11, 21),
+                LocalDate.of(2016, 11, 22)
+        };
+
+        Record<Integer> record1 = new Record<>(ld[0], 100);
+        Record<Integer> record2 = new Record<>(ld[1], 200);
+        Record<Integer> record3 = new Record<>(ld[2], 3300);
+        calories = Arrays.asList(record1, record2,
+                record3);
+        return calories;
     }
 }
