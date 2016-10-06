@@ -1,12 +1,16 @@
 package mock;
 
+import mock.domain.Human;
+import mock.domain.Record;
 import org.junit.Test;
+import org.mockito.cglib.core.Local;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 public class Task1 {
@@ -14,19 +18,42 @@ public class Task1 {
     public void test() {
         List mockedList = mock(List.class);
         mockedList.add("one");
-//        mockedList.clear();
+        //    mockedList.clear();
 
         verify(mockedList).add("one");
-//        verify(mockedList).clear();
+        //   verify(mockedList).clear();
+    }
+
+    @Test
+    public void mockPayment() throws Exception {
+        Human human = mock(Human.class);
+        LocalDate now = LocalDate.now();
+        LocalDate[] ld = new LocalDate[]{
+                LocalDate.of(2016, 11, 20),
+                LocalDate.of(2016, 11, 21),
+                LocalDate.of(2016, 11, 22)
+        };
+
+        Record<Integer> record1 = new Record<>(ld[0], 100);
+        Record<Integer> record2 = new Record<>(ld[1], 200);
+        Record<Integer> record3 = new Record<>(ld[2], 3300);
+        List<Record<Integer>> calories = Arrays.asList(record1, record2,
+                record3);
+        given(human.getCalories()).willReturn(calories);
+
+//        when(human.getSumDue()).thenCallRealMethod();
+
+        System.out.println(human.getCalories().get(1));
     }
 
     @Test
     public void test2() throws Exception {
         // you can mock concrete classes, not only interfaces
         LinkedList mockedList = mock(LinkedList.class);
-
+        mockedList.add(10);
         // stubbing appears before the actual execution
         when(mockedList.get(0)).thenReturn("first");
+        when(mockedList.get(0)).thenThrow(new EmptyStackException());
 
         // the following prints "first"
         System.out.println(mockedList.get(0));
