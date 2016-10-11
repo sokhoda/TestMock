@@ -43,13 +43,14 @@ public class Task1 {
     public void test2() throws Exception {
         // you can mock concrete classes, not only interfaces
         LinkedList mockedList = mock(LinkedList.class);
-        mockedList.add(10);
         // stubbing appears before the actual execution
         when(mockedList.get(0)).thenReturn("first");
-        when(mockedList.get(0)).thenThrow(new EmptyStackException());
+        when(mockedList.get(1)).thenReturn("seconde");
+//        when(mockedList.get(0)).thenThrow(new EmptyStackException());
 
         // the following prints "first"
         System.out.println(mockedList.get(0));
+        System.out.println(mockedList.get(1));
         // the following prints "null" because get(999) was not stubbed
         System.out.println(mockedList.get(999));
     }
@@ -61,13 +62,13 @@ public class Task1 {
         when(mockedList.size()).thenReturn(1);
 //        when(mockedList.add(1)).thenReturn(1);
         // using mock object - it does not throw any "unexpected interaction" exception
-//        mockedList.add("one");
-//        mockedList.add("two");
+        mockedList.add("one");
+        mockedList.add("two");
 //
 //        // selective, explicit, highly readable verification
 
-//        verify(mockedList).add("one");
-//        verify(mockedList).add("two");
+        verify(mockedList).add("one");
+        verify(mockedList).add("two");
         assertThat(mockedList.size(), is(1));
     }
 
