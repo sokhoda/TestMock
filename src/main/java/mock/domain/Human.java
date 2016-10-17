@@ -4,6 +4,7 @@ package mock.domain;
 import mock.main.DoseCalculator;
 import mock.report.Report;
 import mock.report.ReportLogic;
+import org.omg.PortableInterceptor.ServerRequestInfo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -79,6 +80,13 @@ public class Human {
 
     public boolean dayTooMuchHours(LocalDate date) {
         return (rl.getSum(hours, date) - dc.getHours()) > 0;
+    }
+
+    public boolean surnameContainsName(String name, String surname){
+        if (surname != null && name != null){
+            return surname.matches(".*" + name + ".*");
+        }
+        return false;
     }
 
     public List<Record<Integer>> getWater() {

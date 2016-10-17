@@ -1,16 +1,35 @@
+import matchers.LengthString;
+import matchers.AsaMatcherString;
+import matchers.AbcMatcher;
 import mock.domain.Human;
 import mock.domain.Record;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 public class Task1 {
+
+    @Mock
+    private List<String> mockedList;
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void test() {
         List mockedList = mock(List.class);
@@ -32,6 +51,41 @@ public class Task1 {
 
         assertThat(resultTen, is(2));
         assertThat(resultTwenty, is(2));
+
+    }
+
+    @Test
+    public void name() throws Exception {
+        List<Integer> ilist = mock(ArrayList.class);
+        ilist.add(11);
+        verify(ilist).add(intThat(is(greaterThan(10))));
+
+        mockedList.add("afrfasafr ff34 ");
+        verify(mockedList).add(anyString());
+        verify(mockedList).add(argThat(new AsaMatcherString()));
+    }
+
+    @Test
+    public void multipleParamsMatch() throws Exception {
+        Human human = mock(Human.class);
+        human.surnameContainsName("12asa ", " abc2");
+////        human.surnameContainsName(eq("f"),eq("34"));
+//
+        verify(human).surnameContainsName(
+                argThat(both(new AsaMatcherString()).and(new LengthString())),
+                argThat(new AbcMatcher()));
+
+        human.surnameContainsName("as1a 1", " abc2");
+        verify(human,atLeast(1)).surnameContainsName(
+                argThat(either(new AsaMatcherString()).or(new LengthString())),
+                argThat(new AbcMatcher()));
+
+        human.surnameContainsName("12a@s1a ", " ab@c2");
+        human.surnameContainsName("12a@s1a ", " ab@c2");
+        human.surnameContainsName("12a@s1a ", " ab@c2");
+        verify(human,atLeast(2)).surnameContainsName(matches(".*@.*"), matches
+                (".*@.*"));
+        verify(human, never()).getWater();
 
     }
 
@@ -59,7 +113,7 @@ public class Task1 {
     public void mockPayment() throws Exception {
         //given
         Human human = mock(Human.class);
-        List<Record<Integer>> calories = init();
+        List<Record<Integer>> calories = myInit();
         Record<Integer> record2 = new Record<>(LocalDate.of(2016, 11, 21), 200);
         given(human.getCalories()).willReturn(calories);
 
@@ -105,7 +159,7 @@ public class Task1 {
     }
 
 
-    public List<Record<Integer>> init() {
+    public List<Record<Integer>> myInit() {
         List<Record<Integer>> calories = new ArrayList<>();
         LocalDate now = LocalDate.now();
         LocalDate[] ld = new LocalDate[]{
