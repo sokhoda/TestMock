@@ -1,5 +1,3 @@
-package mock;
-
 import mock.domain.Human;
 import mock.domain.Record;
 import org.junit.Test;
@@ -21,6 +19,40 @@ public class Task1 {
 
         verify(mockedList).add("one");
         //   verify(mockedList).clear();
+    }
+
+    @Test
+    public void defVal() throws Exception {
+        Human human = mock(Human.class);
+        given(human.gettAgeOfMe(anyInt())).willReturn(2);
+
+        //when
+        int resultTen = human.gettAgeOfMe(10);
+        int resultTwenty = human.gettAgeOfMe(20);
+
+        assertThat(resultTen, is(2));
+        assertThat(resultTwenty, is(2));
+
+    }
+
+    @Test
+    public void spyHuman() throws Exception {
+        Human spy = spy(new Human());
+        List<Record<Double>> hours = spy.getHours();
+        List<Record<Double>> hours2 = spy.getHours();
+
+        Record<Double> record = new Record<>(LocalDate.now(), 1.5);
+        hours.add(record);
+        verify(spy, times(2)).getHours();
+
+//        doReturn(true).when(spy).dayZeroCalories(any(LocalDate.class));
+        doCallRealMethod().when(spy).dayZeroCalories(any(LocalDate.class));
+//        doThrow( new RuntimeException()).when(spy).dayZeroCalories(any(LocalDate.class));
+
+        boolean result = spy.dayZeroCalories(LocalDate.MAX);
+
+        assertThat(result, is(true));
+        assertThat(hours.size(), is(2));
     }
 
     @Test

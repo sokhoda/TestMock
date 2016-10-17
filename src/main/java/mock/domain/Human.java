@@ -24,6 +24,10 @@ public class Human {
         dc = new DoseCalculator();
     }
 
+    public int gettAgeOfMe(int a){
+        return a + 1;
+    }
+
     private void init() {
         water.add(new Record<>(LocalDate.MIN, 0));
         calories.add(new Record<>(LocalDate.MIN, 0));
@@ -92,4 +96,5 @@ public class Human {
     public List<Record<Integer>> getSteps() {
         return steps;
     }
+
 }
