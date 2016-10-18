@@ -1,29 +1,34 @@
-import matchers.LengthString;
-import matchers.AsaMatcherString;
 import matchers.AbcMatcher;
+import matchers.AsaMatcherString;
+import matchers.LengthString;
 import mock.domain.Human;
 import mock.domain.Record;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.either;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.mockito.AdditionalMatchers.and;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.AdditionalMatchers.geq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
 public class Task1 {
 
     @Mock
     private List<String> mockedList;
+
+    @Spy
+    private List<Integer> spyList = new LinkedList<>();
 
     @Before
     public void init() {
@@ -55,6 +60,54 @@ public class Task1 {
     }
 
     @Test
+    public void testSpy() throws Exception {
+        spyList.add(10);
+        spyList.addAll(Arrays.asList(11, -23, 44));
+        System.out.println(spyList);
+        doReturn(12).when(spyList).get(0);
+        doCallRealMethod().when(spyList).get(0);
+        System.out.println(spyList.get(0));
+    }
+
+    @Test
+    public void argumentCaptor() throws Exception {
+        Human human = new Human();
+        Human spyHuman = spy(human);
+
+        spyHuman.setName("Ivan");
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(spyHuman).setName(argumentCaptor.capture());
+        String expected = "Ivan";
+        assertThat(expected, is(argumentCaptor.getValue()));
+    }
+
+    @Test
+    public void argumentCaptorVarArg() throws Exception {
+        Human human = new Human();
+        Human spyHuman = spy(human);
+        spyHuman.setPersonalData("Ivan","Hrytsyshyn");
+
+        ArgumentCaptor<String> varArgs = ArgumentCaptor.forClass(String.class);
+
+        verify(spyHuman).setPersonalData(varArgs.capture());
+        List expected = Arrays.asList("Ivan", "Hrytsyshyn");
+        assertEquals(expected, varArgs.getAllValues());
+    }
+
+    @Test
+    public void isOrder() throws Exception {
+        spyList.add(-1);
+        spyList.get(0);
+        spyList.addAll(Arrays.asList(1,2));
+
+        InOrder inOrder = inOrder(spyList);
+        inOrder.verify(spyList).add(geq(-1));
+        inOrder.verify(spyList).get(0);
+        inOrder.verify(spyList).addAll(anyList());
+    }
+
+    @Test
     public void name() throws Exception {
         List<Integer> ilist = mock(ArrayList.class);
         ilist.add(11);
@@ -76,14 +129,14 @@ public class Task1 {
                 argThat(new AbcMatcher()));
 
         human.surnameContainsName("as1a 1", " abc2");
-        verify(human,atLeast(1)).surnameContainsName(
+        verify(human, atLeast(1)).surnameContainsName(
                 argThat(either(new AsaMatcherString()).or(new LengthString())),
                 argThat(new AbcMatcher()));
 
         human.surnameContainsName("12a@s1a ", " ab@c2");
         human.surnameContainsName("12a@s1a ", " ab@c2");
         human.surnameContainsName("12a@s1a ", " ab@c2");
-        verify(human,atLeast(2)).surnameContainsName(matches(".*@.*"), matches
+        verify(human, atLeast(2)).surnameContainsName(matches(".*@.*"), matches
                 (".*@.*"));
         verify(human, never()).getWater();
 

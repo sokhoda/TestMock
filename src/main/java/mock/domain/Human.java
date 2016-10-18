@@ -19,6 +19,8 @@ public class Human {
     private final List<Record<Integer>> steps = new ArrayList<>();
     private final ReportLogic rl = new ReportLogic(Report.getDigits());
     private DoseCalculator dc;
+    private String name;
+    private String surname;
 
     public Human() {
         init();
@@ -28,6 +30,17 @@ public class Human {
     public int gettAgeOfMe(int a){
         return a + 1;
     }
+
+    public void setPersonalData(String ... data){
+        int length = data.length;
+        if (length > 0){
+            this.name = data[0];
+            if(length > 1){
+                this.setSurname(data[1]);
+            }
+        }
+    }
+
 
     private void init() {
         water.add(new Record<>(LocalDate.MIN, 0));
@@ -105,4 +118,19 @@ public class Human {
         return steps;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 }
